@@ -1,6 +1,11 @@
 #include "tcp.h"
 
-char* tcp_hello(void) {
+/** @brief  tcp_hello   클라이언트 측에서 서버측으로 전송하는 최초 패킷 생성
+  * @params len         생성된 패킷의 길이
+  * @return buff        생성된 패킷버퍼
+  *         len         생성된 패킷의 길이
+  */
+char* tcp_hello(size_t *len) {
     const char *str = NULL;
     char *buff = NULL;
 
@@ -11,10 +16,10 @@ char* tcp_hello(void) {
 
     str = json_object_get_string(json);
 
-    buff = strndup(str, strlen(str));
+    *len = strlen(str);
+    buff = strndup(str, len);
 
     //buff = (char*)malloc(SERVER_HELLO_PACKET_SIZE);
-
     return buff;
 }
 

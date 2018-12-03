@@ -12,8 +12,9 @@
 
 int main(int argc, char *argv[]) {
     char    buf[BUF_LEN+1]  = {0, };
-    char    *buff_send      = NULL;
+    char    *send_data      = NULL;
     char    *haddr          = "13.125.12.123";
+    size_t  send_data_len   = 0;
     int     fd              = 0;
     int     n               = 0;
     struct sockaddr_in      server_addr;
@@ -33,7 +34,8 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     
-    buff_send = tcp_hello();
+    send_data = tcp_hello(&send_data_len);
+    send(fd, send_data, send_data_len, MSG_NOSIGNAL);
 
     while((n = read(fd, buf, BUF_LEN)) > 0) {
         buf[n] = '\0';
