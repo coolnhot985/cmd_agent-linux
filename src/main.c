@@ -11,13 +11,11 @@
 #define BUF_LEN 128
 
 int main(int argc, char *argv[]) {
-    char    buf[BUF_LEN+1]  = {0, };
-    char    *send_data      = NULL;
-    char    *haddr          = "13.125.12.123";
-    size_t  send_data_len   = 0;
+    char    *haddr          = "13.125.43.43";
     int     fd              = 0;
-    int     n               = 0;
     struct sockaddr_in      server_addr;
+
+    int     ret             = 0;
 
     if((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
         printf("can't create socket\n");
@@ -33,15 +31,13 @@ int main(int argc, char *argv[]) {
         printf("can't connect.\n");
         return 0;
     }
-    
-    send_data = tcp_hello(&send_data_len);
-    send(fd, send_data, send_data_len, MSG_NOSIGNAL);
 
-    while((n = read(fd, buf, BUF_LEN)) > 0) {
-        buf[n] = '\0';
-        printf("%s", buf);
+    ret = handshake(fd);
+    if (ret == 1) {
+    } else {
+        return 0;
     }
-    
+  
     close(fd);
 }
 

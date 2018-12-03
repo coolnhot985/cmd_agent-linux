@@ -24,5 +24,5 @@ char* parse_json_to_string(json_object *json_obj) {
                 break;
         }
     }
+    return json_object_get_string(val);
 }
-
