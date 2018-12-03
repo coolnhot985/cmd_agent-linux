@@ -11,10 +11,10 @@
 #define BUF_LEN 128
 
 int main(int argc, char *argv[]) {
-    char    *haddr          = "13.125.43.43";
-    int     fd              = 0;
+    char    *haddr          = "13.125.12.123";
     struct sockaddr_in      server_addr;
-
+    char    *recv_data      = NULL;
+    int     fd              = 0;
     int     ret             = 0;
 
     if((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
@@ -32,12 +32,19 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    /* hand shake to server */ 
     ret = handshake(fd);
     if (ret == 1) {
     } else {
         return 0;
     }
-  
+
+    /*  recv cmd */
+    DEBUG("waiting .. ");
+    while(1) {
+        recv_data = socket_read(fd);
+        DEBUG("cmd [%s]", recv_data);
+    }
     close(fd);
 }
 

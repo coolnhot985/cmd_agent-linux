@@ -9,17 +9,26 @@ int handshake(int fd) {
 
     /* TCP_HELLO packet's mean SYN */
     send_data = tcp_hello(&send_data_len);
-    send(fd, send_data, send_data_len, MSG_NOSIGNAL);
-   
+
+#if 0
+    send_data_len++;
+    send_data = realloc(send_data, send_data_len);
+    *(send_data + send_data_len) = '\0';
+#endif
+    
+    send_data_len = append_null(send_data, send_data_len);
+
+    send(fd, send_data, send_data_len, MSG_DONTWAIT);
     recv_data = socket_read(fd);                        /* SYN_ACK */
     if (strcmp(recv_data, "SYN_ACK") == 0) {            /* ACK */
-        send(fd, "ACK", strlen("ACK"), MSG_NOSIGNAL);
+        recv_data = socket_read(fd);
         DEBUG("ACK");
     } else {
         DEBUG("FIN");
         return -1;
     }
-
+    
+    free(recv_data);
     return 1;
 }
 
@@ -36,7 +45,7 @@ char* socket_read(int fd) {
         if (len < 0) {
             return recv_data;
         }
-        realloc(recv_data, len);
+        recv_data = realloc(recv_data, len);
         memcpy(recv_data, buff, len);
     }
 

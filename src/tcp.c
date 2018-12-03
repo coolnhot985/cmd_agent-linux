@@ -23,3 +23,11 @@ char* tcp_hello(size_t *len) {
     return buff;
 }
 
+int append_null(char *str, int len) {
+    len++;
+    str = realloc(str, len);
+
+    *(str + len) = '\0';
+
+    return len;
+}
