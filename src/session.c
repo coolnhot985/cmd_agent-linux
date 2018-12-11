@@ -14,6 +14,8 @@ int handshake(int fd) {
     *(send_data + send_data_len) = '\0';
 #endif
     send_data_len = append_null(send_data, send_data_len);
+
+    DEBUG("send data [%s]", send_data);
     
     send(fd, send_data, send_data_len, MSG_NOSIGNAL);
     recv_data = socket_read(fd);                     /* SYN_ACK */
@@ -110,14 +112,19 @@ char* socket_read(int fd) {
 char* tcp_hello(size_t *len) {
     const char *str = NULL;
     char *buff = NULL;
+    
+    char mac_addr[MAC_LEN] = {0, };
+    mac_eth0(mac_addr);
 
     json_object *json = json_object_new_object();
     json_object *agent_type = json_object_new_string(AGENT_TYPE_LINUX_NVIDIA);
+    json_object *miner_mac  = json_object_new_string(mac_addr);
     
     json_object_object_add(json, "agent_type", agent_type);
+    json_object_object_add(json, "miner_mac", miner_mac);
 
     str = json_object_get_string(json);
-
+    
     *len = strlen(str);
     buff = strndup(str, len);
 

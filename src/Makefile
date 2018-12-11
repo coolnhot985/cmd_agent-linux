@@ -12,7 +12,7 @@ MAKE_FLAGS  += --no-print-directory
 LIB = $(JSON_LIB_PATH)
 PROGRAM = ../cmd_agent
 OBJ = $(SRC:.c=.o)
-SRC = main.c parse.c session.c
+SRC = main.c parse.c session.c utils.c
 .SUFFIXES : .c .o
 
 all : $(PROGRAM)
