@@ -32,42 +32,6 @@ int handshake(int fd) {
     return 1;
 }
 
-#if 0
-int handshake(int fd) {
-    char    *send_data      = NULL;
-    char    *recv_data      = NULL;
-    size_t  send_data_len   = 0;
-
-    /* TCP_HELLO packet's mean SYN */
-    send_data = tcp_hello(&send_data_len);
-
-#if 0
-    send_data_len++;
-    send_data = realloc(send_data, send_data_len);
-    *(send_data + send_data_len) = '\0';
-#endif
-    
-    send_data_len = append_null(send_data, send_data_len);
-
-    send(fd, send_data, send_data_len, MSG_NOSIGNAL);
-    BREAK("send_data [%s]", send_data);
-    recv_data = socket_read(fd);                     /* SYN_ACK */
-    BREAK("recv_data [%s]", recv_data);
-    if (strcmp(recv_data, "SYN_ACK") == 0) {            
-        DEBUG("wait req...");
-        recv_data = socket_read(fd);
-    
-        BREAK("commend [%s]", recv_data);
-    } else {
-        DEBUG("FIN");
-        return -1;
-    }
-    
-    free(recv_data);
-    return 1;
-}
-#endif
-
 char* socket_read(int fd) {
     int     len = 0;
     int     recv_len = 0;
