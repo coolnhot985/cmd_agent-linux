@@ -8,7 +8,7 @@
 
 int handshake(int fd);
 char* socket_read(int fd);
-char* tcp_hello(size_t *len);
+char* msg_client_info(size_t *len);
 int append_null(char *str, int len);
 
 #endif

@@ -1,24 +1,36 @@
 #include "session.h"
+#include "parse.h"
 
 int handshake(int fd) {
     char    *send_data      = NULL;
     char    *recv_data      = NULL;
+    cmd_t   *cmd            = NULL;
+
     size_t  send_data_len   = 0;
+    
+    json_object *recv_data_json = NULL;
 
     /* TCP_HELLO packet's mean SYN */
-    send_data = tcp_hello(&send_data_len);
+    send_data = msg_client_info(&send_data_len);
 
-#if 0
-    send_data_len++;
-    send_data = realloc(send_data, send_data_len);
-    *(send_data + send_data_len) = '\0';
-#endif
     send_data_len = append_null(send_data, send_data_len);
 
     DEBUG("send data [%s]", send_data);
     
     send(fd, send_data, send_data_len, MSG_NOSIGNAL);
-    recv_data = socket_read(fd);                     /* SYN_ACK */
+    recv_data = socket_read(fd);                     
+    if (recv_data != NULL) {
+        /** 데이터 수신 성공, 수신한 데이터는string 
+         * json 으로 변환 후 content 파싱, string 으로 다시 변환 */
+        recv_data_json = parse_string_to_json(recv_data);
+        cmd = parse_json_cmd(recv_data_json);
+        DEBUG("recv cmd_type [%s] path [%s]", cmd->cmd_type, cmd->path);
+
+        /* 여기서부터 파싱한 명령에 따라 명령 수행 로직*/
+    }
+
+#if 0
+    /* 핸드쉐이크 로직은 필요없어 보임 */
     if (strcmp(recv_data, "SYN_ACK") == 0) {            
         DEBUG("wait req...");
         recv_data = socket_read(fd);
@@ -26,8 +38,8 @@ int handshake(int fd) {
     } else {
         DEBUG("FIN");
         return -1;
-    }
-    
+    }    
+#endif
     free(recv_data);
     return 1;
 }
@@ -68,12 +80,12 @@ char* socket_read(int fd) {
     return recv_data;
 }
 
-/** @brief  tcp_hello   클라이언트 측에서 서버측으로 전송하는 최초 패킷 생성
+/** @brief  msg_cleint_info 클라이언트 측에서 서버측으로 전송하는 최초 패킷 생성
   * @params len         생성된 패킷의 길이
   * @return buff        생성된 패킷버퍼
   *         len         생성된 패킷의 길이
   */
-char* tcp_hello(size_t *len) {
+char* msg_client_info(size_t *len) {
     const char *str = NULL;
     char *buff = NULL;
     
