@@ -54,8 +54,22 @@ cmd_t* parse_json_cmd(json_object *json_obj) {
                     if (0 != json_object_get_string_len(val)) {
                         cmd->path = json_object_get_string(val);
                     } else {
-                        cmd->path = (char*)malloc(sizeof(1));;
+                        cmd->path = (char*)malloc(sizeof(1));
                         cmd->path = "\0";
+                    }
+                } else if (strcmp(key, "path_install") == 0) {
+                    if (0 != json_object_get_string_len(val)) {
+                        cmd->path_install = json_object_get_string(val);
+                    } else {
+                        cmd->path_install = (char*)malloc(sizeof(1));
+                        cmd->path_install = '\0';
+                    }
+                } else if (strcmp(key, "content") == 0) {
+                    if (0 != json_object_get_string_len(val)) {
+                        cmd->content = json_object_get_string(val);
+                    } else {
+                        cmd->content = (char*)malloc(sizeof(1));
+                        cmd->content = "\0";
                     }
                 }
                 break;

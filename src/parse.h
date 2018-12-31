@@ -7,6 +7,8 @@
 typedef struct _cmd_t {
     char    *cmd_type;
     char    *path;
+    char    *content;
+    char    *path_install;
 }cmd_t;
 
 char* parse_json_to_string(json_object *json_obj);

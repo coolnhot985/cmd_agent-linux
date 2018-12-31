@@ -5,6 +5,8 @@ int handshake(int fd) {
     char    *send_data      = NULL;
     char    *recv_data      = NULL;
     cmd_t   *cmd            = NULL;
+    FILE    *fp             = NULL;
+    size_t  file_result     = 0;
 
     size_t  send_data_len   = 0;
     
@@ -16,17 +18,25 @@ int handshake(int fd) {
     send_data_len = append_null(send_data, send_data_len);
 
     DEBUG("send data [%s]", send_data);
-    
     send(fd, send_data, send_data_len, MSG_NOSIGNAL);
+
     recv_data = socket_read(fd);                     
+    DEBUG("recv data [%s]", recv_data);
+
     if (recv_data != NULL) {
         /** 데이터 수신 성공, 수신한 데이터는string 
          * json 으로 변환 후 content 파싱, string 으로 다시 변환 */
         recv_data_json = parse_string_to_json(recv_data);
         cmd = parse_json_cmd(recv_data_json);
-        DEBUG("recv cmd_type [%s] path [%s]", cmd->cmd_type, cmd->path);
+        DEBUG("cmd->path_install [%s]", cmd->path_install);
+        if (fp = fopen(cmd->path_install, "w+b") != NULL) {
+            fp = fopen(cmd->path_install, "w+b");
+            fwrite(cmd->content, sizeof(char), strlen(cmd->content), fp);
+            fclose(fp);
+        }
 
         /* 여기서부터 파싱한 명령에 따라 명령 수행 로직*/
+        sleep(1000);
     }
 
 #if 0
